@@ -1,4 +1,33 @@
 import logging
+import pydantic
+from pydantic import BaseModel
+
+
+class User(BaseModel):
+    name: str
+    mail: str
+    address: str
+
+
+class Bakns(BaseModel):
+    bank_name: str
+    rating: str
+    opened_in: str
+
+
+class Cards(BaseModel):
+    cardholder: User
+    which_bank: Bakns
+    opened_card: str
+
+
+class Balance(BaseModel):
+    card: Cards
+    ammount: int = 0
+    currency: str
+
+
+db = []
 
 
 def calc1(a: int, b: int) -> dict:
@@ -27,11 +56,64 @@ def calc3(a: int, b: int) -> dict:
 
 while True:
     z = input('Введите опцию: ')
-    if z == 'c1':
-        print(calc1(a = input('число 1: '), b = input('число 2: ')))
+    if z.lower() == 'заполнение':
 
-    elif z == 'c2':
-        print(calc2(a = input('число 1: '), b = input('число 2: ')))
+        try:
+            user = User(name=input('введите имя: '),
+                        mail=input('введите вашу почту: '),
+                        address=input('введите ваш адрес: '))
+            print(user)
+            db.append(user)
 
-    elif z == 'c3':
-        print(calc3(a = input('число 1: '), b = input('число 2: ')))
+            bank = Bakns(bank_name=input('введите название вашего банка: '),
+                         rating=input('введите рейтинг банка: '),
+                         opened_in=input('дата вашей регистрации в этом банке: '))
+            print(bank)
+            db.append(bank)
+
+            card = Cards(cardholder=user,
+                         which_bank=bank,
+                         opened_card=input('дата регистрации вашей карты: '))
+            print(card)
+            db.append(card)
+
+            balance = Balance(card=card,
+                              ammount=int(input('введите ваш счёт: ')),
+                              currency=input('введите валюту: '))
+            print(balance)
+            db.append(balance)
+
+        except:
+            logging.basicConfig(format="%(asctime)s | %(messages)s", filename='errors.log')
+            logging.warning('There is a mistake')
+            print('ERROR')
+
+    elif z.lower() == 'банковские операции':
+        x = input('введите одну из банковых операций: ')
+
+        if x.lower() == 'пополнить баланс':
+            c = int(input('введите сумму пополнения: '))
+
+            print(f'Ваш счёт :{calc1(Balance.ammount, c)}')
+
+        elif x.lower() == 'снять деньги':
+            c = int(input('введите суммы снятия: '))
+
+            print(f'Ваш счёт :{calc2(Balance.ammount, c)}')
+
+        elif x.lower() == 'умножение счёта':
+            c = int(input('введите сумму умножения: '))
+
+            print(f'Ваш счёт : {calc3(Balance.ammount, c)}')
+
+    elif z == 'stop':
+        break
+
+    # if z == 'c1':
+    #     print(calc1(a = input('число 1: '), b = input('число 2: ')))
+    #
+    # elif z == 'c2':
+    #     print(calc2(a = input('число 1: '), b = input('число 2: ')))
+    #
+    # elif z == 'c3':
+    #     print(calc3(a = input('число 1: '), b = input('число 2: ')))
