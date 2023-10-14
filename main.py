@@ -111,7 +111,7 @@ while True:
             logging.basicConfig(format="%(asctime)s | %(messages)s", filename='errors.log')
             logging.warning('There is a mistake')
             print('ERROR')
-    #
+
     elif z.lower() == 'банковские операции':
         x = input('введите одну из банковых операций: ')
 
